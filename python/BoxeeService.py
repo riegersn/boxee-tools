@@ -40,6 +40,7 @@
 
 import mc
 from xml.dom import minidom
+from urllib import quote, unquote
 
 class BoxeeService:
 
@@ -72,6 +73,8 @@ class BoxeeService:
          }
 
       http.Reset()
+      del http
+      
       if result['response'] == 200:
          # request was successfull
          dom = minidom.parseString(data)
@@ -81,7 +84,7 @@ class BoxeeService:
             for i in keyList[0].childNodes:
                if i.firstChild.data:
                   result['serviceEmpty'] = False
-               result['data'][str(i.nodeName)] = str(i.firstChild.data)
+               result['data'][str(i.nodeName)] = unquote(str(i.firstChild.data))
          except:
             self.log('unable to parse xml, there is most likely nothing to return.')
 
@@ -120,7 +123,7 @@ class BoxeeService:
 
       for key in keys:
          elmt = dom.createElement(key)
-         txtn = dom.createTextNode(keys[key])
+         txtn = dom.createTextNode( quote(keys[key]) )
          elmt.appendChild(txtn)
          dom.getElementsByTagName('credentials')[0].appendChild(elmt)
 
@@ -138,6 +141,8 @@ class BoxeeService:
          }
 
       http.Reset()
+      del http
+      
       if result['response'] == 200:
          # data successfully stored
          self.log('user linked to application service successfully')
@@ -172,6 +177,8 @@ class BoxeeService:
          }
 
       http.Reset()
+      del http
+      
       if result['response'] == 200:
          # data successfully removed
          self.log('successfully unlinked user from the application service')
